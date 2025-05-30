@@ -30,6 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref)
                 ref={inputRef}
                 placeholder="Search"
                 className="placeholder:text-zinc-400/80 text-zinc-500 focus:outline-0"
+                autoComplete="off"
                 {...props}
             />
             <button className="absolute top-0 bottom-0 my-auto h-8 end-7 rounded-full cursor-pointer px-1.5 hover:bg-zinc-500/10">
