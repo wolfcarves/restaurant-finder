@@ -3,7 +3,6 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import ReactQueryProvider from '@/providers/react-query';
-import SuggestionProvider from '@/context/suggestion-provider';
 import SearchProvider from '@/context/search-provider';
 
 const geistSans = Geist({
@@ -28,17 +27,15 @@ export default function RootLayout({
 }>) {
     return (
         <ReactQueryProvider>
-            <SuggestionProvider>
-                <SearchProvider>
-                    <Suspense>
-                        <html lang="en">
-                            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                                <main className="h-screen">{children}</main>
-                            </body>
-                        </html>
-                    </Suspense>
-                </SearchProvider>
-            </SuggestionProvider>
+            <SearchProvider>
+                <Suspense>
+                    <html lang="en">
+                        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                            <main className="h-screen">{children}</main>
+                        </body>
+                    </html>
+                </Suspense>
+            </SearchProvider>
         </ReactQueryProvider>
     );
 }

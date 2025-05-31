@@ -2,9 +2,11 @@
 
 import { createContext } from 'react';
 
-export type SearchPayload = {
+export type SearchContextType = {
+    keyword: string;
+    setKeyword: (keyword: string) => void;
     isLoading: boolean;
     setIsLoading: (value: boolean) => void;
 };
 
-export const SearchContext = createContext<SearchPayload | null>(null);
+export const SearchContext = createContext<SearchContextType | null>(null);

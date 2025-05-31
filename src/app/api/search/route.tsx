@@ -68,8 +68,6 @@ export async function GET(request: Request) {
         const requestJson = JSON.parse(rawJson);
         const queryParams = new URLSearchParams(requestJson);
 
-        console.log('rawJson', rawJson);
-
         const url = `${baseUrl}/v3/places/search?${queryParams.toString()}`;
         const response = await fetch(url, getOptions);
         const data = await response.json();

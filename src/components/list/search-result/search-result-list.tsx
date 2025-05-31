@@ -4,7 +4,6 @@ import SearchResultItem from './search-result-item';
 import { useSearchParams } from 'next/navigation';
 import { useApiGetSearchResults } from '@/hooks/api/useApiGetSearchResults';
 import { useCallback } from 'react';
-import SearchResultItemSkeleton from './search-result-item-skeleton';
 
 const SearchResultList = () => {
     const searchParams = useSearchParams();
@@ -25,13 +24,12 @@ const SearchResultList = () => {
             {!isSearchResultsPending && searchResults?.data?.length === 0 && (
                 <p className="text-sm">No results for {"'" + keyword + "'"}</p>
             )}
-
             {results()}
 
-            {/* There some cases the prefetch query seems not to work so I added a suspense like fallback */}
-            {isSearchResultsPending
+            {/* I used to implement this by fallback but prefetch works best I guess */}
+            {/* {isSearchResultsPending
                 ? Array.from({ length: 10 }).map((_, idx) => <SearchResultItemSkeleton key={idx} />)
-                : results()}
+                : results()} */}
         </>
     );
 };

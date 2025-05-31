@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 interface SearchResultItemProps {
@@ -9,6 +10,10 @@ interface SearchResultItemProps {
     };
     categories: {
         name: string;
+        icon?: {
+            prefix: string;
+            suffix: string;
+        };
     }[];
     distance: number;
 }
@@ -20,7 +25,21 @@ const SearchResultItem = ({ name, categories, location, distance }: SearchResult
     return (
         <div className="py-2">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2 py-2">
-                <div className="rounded-full bg-zinc-100 text-xs w-max py-1 px-1.5">{category}</div>
+                <div className="flex items-center gap-x-2 rounded-full bg-zinc-100 text-xs w-max py-1 px-1.5">
+                    {categories?.[0]?.icon && (
+                        <div className="w-5 h-5 rounded-full overflow-hidden bg-zinc-400">
+                            <Image
+                                alt="place-icon"
+                                src={`${categories?.[0].icon?.prefix}64${categories?.[0].icon?.suffix}`}
+                                width={0}
+                                height={0}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    )}
+
+                    {category}
+                </div>
                 <div className="text-zinc-500 text-xs">{distanceKm}</div>
             </div>
 
