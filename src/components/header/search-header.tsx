@@ -9,17 +9,21 @@ const SearchHeader = () => {
 
     return (
         <div>
+            {/* To reserve space */}
             <div className="h-32" aria-label="Reserve position" />
 
             <div
                 className={`${
                     isOpen ? 'h-screen fixed' : 'absolute h-32'
-                }  top-0 start-0 w-full bg-white border-b border-b-zinc-100 px-4 duration-500`}
-                onClick={() => setIsOpen(false)}
+                }  top-0 start-0 w-full bg-white border-b border-b-zinc-200/80 px-4 duration-500`}
             >
                 <div className="w-full max-w-7xl mx-auto py-4">
                     <div className="w-full max-w-[40rem]">
-                        <SearchForm onFocus={() => setIsOpen(true)} onSubmitForm={() => setIsOpen(false)} />
+                        <SearchForm
+                            onFocus={() => setIsOpen(true)}
+                            onBlur={() => setIsOpen(false)}
+                            onSubmitForm={() => setIsOpen(false)}
+                        />
 
                         {isOpen && (
                             <div className="mt-5">

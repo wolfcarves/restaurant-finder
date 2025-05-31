@@ -22,6 +22,10 @@ const SearchResultList = () => {
 
     return (
         <>
+            {!isSearchResultsLoading && searchResults?.data?.length === 0 && (
+                <p className="text-sm">No results for {"'" + keyword + "'"}</p>
+            )}
+
             {isSearchResultsLoading
                 ? Array.from({ length: 10 }).map((_, idx) => <SearchResultItemSkeleton key={idx} />)
                 : results()}

@@ -24,16 +24,16 @@ export async function GET(request: Request) {
                         Convert the search query to this structured parsable JSON format:
 
                         {
-                            query: '', //A search term to be applied against titles. Must be at least 3 characters long.
+                            query: '', // A search term to be applied against titles.
                             ll: '', // The latitude/longitude around which you wish to retrieve place information. Specified as latitude,longitude (e.g., ll=41.8781,-87.6298). If you do not specify ll, the server will attempt to retrieve the IP address from the request, and geolocate that IP address.
                             radius: 5000, //Defines the distance (in meters) within which to return place results. Setting a radius biases the results to the indicated area, but may not fully restrict results to that specified area. If not provided, default radius is set to 5000 meters.
                             types: 'place', // The types of results to return; any combination of place, address, search, and/or geo.If no types are specified, all types will be returned.
                             bias: 'geo', // Bias the autocomplete results by a specific type; one of place, address, search, or geo.
-                            limit: 10 // default this to 10
+                            limit: 20 // default this to 20
                         }
 
                         Only respond with the raw JSON object, no explanation, no comments.
-                        Use all of the mentioned locations, unless the user's current location is provided.
+                        Use all of the mentioned locations from the query, unless the user's current location is provided.
                         `,
                 },
             ],

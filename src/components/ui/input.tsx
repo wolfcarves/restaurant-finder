@@ -7,7 +7,6 @@ import { AiOutlineLoading } from 'react-icons/ai';
 
 export interface InputProps extends ComponentPropsWithRef<'input'> {
     isLoading?: boolean;
-    onFocus?: () => void;
     onSearchBtnClick?: () => void;
 }
 
