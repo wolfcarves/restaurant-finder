@@ -30,6 +30,8 @@ export async function GET(request: Request) {
 
                         Set bias to the most suitable of: "place", "address", "search", or "geo".
 
+                        If there are any spelling errors or typos in the location or keyword, correct them before generating the JSON.
+
                         Always return a complete JSON object with the following keys: query, ll, radius, types, bias, and limit.
 
                         {
