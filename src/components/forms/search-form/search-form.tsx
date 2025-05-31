@@ -2,7 +2,7 @@
 
 import Input, { InputProps } from '../../ui/input';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, KeyboardEvent, useContext, useEffect, useRef } from 'react';
+import { ChangeEvent, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchSearchResults, GET_SEARCH_RESULTS_KEY } from '@/hooks/api/useApiGetSearchResults';
 import { SearchContext, SearchContextType } from '@/context/search-context';
@@ -16,6 +16,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
     const queryClient = useQueryClient();
     const router = useRouter();
 
+    const [hasSearched, setHasSearched] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const searchCtx = useContext<SearchContextType | null>(SearchContext);
     const { keyword, setKeyword, setIsLoading, isLoading } = searchCtx!;
@@ -55,6 +56,10 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
         }
     }, [keyword, setKeyword]);
 
+    useEffect(() => {
+        if (isLoading) setHasSearched(true);
+    }, [isLoading]);
+
     return (
         <>
             <Input
@@ -72,7 +77,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
                 <div className="relative mt-4 h-6 overflow-hidden">
                     <p
                         className={`${
-                            isLoading && '-translate-y-full'
+                            hasSearched && '-translate-y-full'
                         } absolute start-0 end-0 mx-auto text-sm text-center text-zinc-500 duration-500`}
                     >
                         Just describe it — we’ll help you find the perfect place.
@@ -80,7 +85,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
 
                     <p
                         className={`
-                    ${isLoading && '-translate-y-full'}
+                    ${hasSearched && '-translate-y-full'}
                     absolute top-full start-0 end-0 mx-auto text-sm text-center text-zinc-500 duration-500`}
                     >
                         Finding the perfect place for you...

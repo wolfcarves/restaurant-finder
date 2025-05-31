@@ -11,7 +11,7 @@ export default async function HomePage() {
                 </div>
             </div>
 
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full px-4">
                 <SearchForm withDescription />
             </div>
 

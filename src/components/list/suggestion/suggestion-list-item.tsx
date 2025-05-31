@@ -38,7 +38,7 @@ const SuggestionListItem = ({ name }: SuggestionListItemProps) => {
     return (
         <button className="w-full cursor-pointer hover:bg-zinc-50" onMouseDown={handleSuggestionClick}>
             <div className="flex items-center justify-between w-full border-b border-b-zinc-200">
-                <p className="text-sm text-zinc-500 py-3">{name}</p>
+                <p className="text-start text-sm text-zinc-500 truncate py-3">{name}</p>
                 <CiSearch size={20} className="text-zinc-500" />
             </div>
         </button>

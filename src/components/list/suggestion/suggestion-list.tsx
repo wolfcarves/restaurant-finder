@@ -10,6 +10,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 const SuggestionList = () => {
     const searchCtx = useContext(SearchContext);
 
+    const [hasSearched, setHasSearched] = useState<boolean>(false);
     // Has own state for debouncing
     const [keyword, setKeyword] = useState<string>('');
     const debounceKeyword = useDebounce(keyword, 300);
@@ -32,6 +33,10 @@ const SuggestionList = () => {
         setKeyword(keyword ?? '');
     }, [refetchSuggestion, searchCtx?.keyword]);
 
+    useEffect(() => {
+        if (searchCtx?.isLoading) setHasSearched(true);
+    }, [searchCtx?.isLoading]);
+
     const _suggestionData = suggestionData?.data.filter((res) => res.place && res.place.name);
 
     return (
@@ -40,7 +45,7 @@ const SuggestionList = () => {
                 Array.from({ length: 5 }).map((_, idx) => {
                     return <SuggestionListItemSkeleton key={idx} />;
                 })
-            ) : !searchCtx?.isLoading ? (
+            ) : !hasSearched ? (
                 <div>
                     {_suggestionData?.map(({ place }) => {
                         return <SuggestionListItem key={place?.fsq_id} name={place?.name} />;
