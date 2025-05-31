@@ -9,6 +9,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { SuggestionContext } from '@/context/suggestion-context';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchSearchResults, GET_SEARCH_RESULTS_KEY } from '@/hooks/api/useApiGetSearchResults';
+import { SearchContext } from '@/context/search-context';
 
 interface SearchFormProps extends InputProps {
     withDescription?: boolean;
@@ -21,7 +22,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
 
     const inputRef = useRef<HTMLInputElement>(null);
     const suggestionCtx = useContext(SuggestionContext);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const searchCtx = useContext(SearchContext);
     const [keyword, setKeyword] = useState<string>('');
     const debounceKeyword = useDebounce(keyword, 500);
 
@@ -46,18 +47,14 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
         if (!keyword) return;
         onSubmitForm?.();
 
-        setIsLoading(true);
+        searchCtx?.setIsLoading(true);
 
-        try {
-            await queryClient.prefetchQuery({
-                queryKey: GET_SEARCH_RESULTS_KEY(keyword),
-                queryFn: async () => await fetchSearchResults(keyword),
-            });
-        } catch (error) {
-            //
-        }
+        await queryClient.prefetchQuery({
+            queryKey: GET_SEARCH_RESULTS_KEY(keyword),
+            queryFn: async () => await fetchSearchResults(keyword),
+        });
 
-        setIsLoading(false);
+        searchCtx?.setIsLoading(false);
 
         router.push(`/search?keyword=${keyword}`);
     };
@@ -69,13 +66,15 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
         }
     }, [prevKeyword]);
 
+    useEffect(() => {}, [suggestionCtx]);
+
     return (
         <>
             <Input
                 ref={inputRef}
                 placeholder="Search"
                 onChange={handleOnChange}
-                isLoading={isLoading}
+                isLoading={searchCtx?.isLoading}
                 onKeyDown={handleKeyDown}
                 onSearchBtnClick={handleSubmitForm}
                 {...props}
@@ -85,7 +84,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
                 <div className="relative mt-4 h-6 overflow-hidden">
                     <p
                         className={`${
-                            isLoading && '-translate-y-full'
+                            searchCtx?.isLoading && '-translate-y-full'
                         } absolute start-0 end-0 mx-auto text-sm text-center text-zinc-500 duration-500`}
                     >
                         Just describe it — we’ll help you find the perfect place.
@@ -93,7 +92,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
 
                     <p
                         className={`
-                    ${isLoading && '-translate-y-full'}
+                    ${searchCtx?.isLoading && '-translate-y-full'}
                     absolute top-full start-0 end-0 mx-auto text-sm text-center text-zinc-500 duration-500`}
                     >
                         Finding the perfect place for you...

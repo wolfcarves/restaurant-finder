@@ -2,9 +2,9 @@
 
 import { createContext } from 'react';
 
-export type AutoCompletePayload = {
+export type SuggestionPayload = {
     keyword: string;
     setKeyword: (keyword: string) => void;
 };
 
-export const SuggestionContext = createContext<AutoCompletePayload | null>(null);
+export const SuggestionContext = createContext<SuggestionPayload | null>(null);

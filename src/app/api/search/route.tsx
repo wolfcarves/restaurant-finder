@@ -1,10 +1,8 @@
-import { getFourSquareInstance } from '@/lib/forsquareapi';
+import { baseUrl, getOptions } from '@/lib/forsquareapi';
 import { openai } from '@/lib/openapi';
 
 export async function GET(request: Request) {
     try {
-        const fsq = getFourSquareInstance();
-
         const { searchParams } = new URL(request.url);
         const keyword = searchParams.get('keyword');
 
@@ -41,11 +39,15 @@ export async function GET(request: Request) {
 
         const rawJson = completion.choices?.[0].message.content as string;
         const requestJson = JSON.parse(rawJson);
+        const queryParams = new URLSearchParams(requestJson);
 
-        const { data } = await fsq.placeSearch(requestJson);
+        const url = `${baseUrl}/v3/places/search?${queryParams.toString()}`;
+        const response = await fetch(url, getOptions);
+        const data = await response.json();
 
         return Response.json({ data: data.results });
     } catch (err) {
+        console.log('err', err);
         return Response.json({ err });
     }
 }

@@ -1,7 +1,9 @@
-import forsquare from '@api/fsq-developers';
+export const baseUrl = 'https://api.foursquare.com';
 
-export const getFourSquareInstance = () => {
-    const apiKey = process.env.FORSQUARE_API_KEY ?? '';
-    forsquare.auth(apiKey);
-    return forsquare;
+export const getOptions = {
+    method: 'GET',
+    headers: {
+        accept: 'application/json',
+        Authorization: process.env.FORSQUARE_API_KEY as string,
+    },
 };
