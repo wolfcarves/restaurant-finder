@@ -10,7 +10,7 @@ const SearchResultList = () => {
     const searchParams = useSearchParams();
     const keyword = searchParams.get('keyword') ?? '';
 
-    const { data: searchResults, isLoading: isSearchResultsLoading } = useApiGetSearchResults({ keyword });
+    const { data: searchResults, isPending: isSearchResultsPending } = useApiGetSearchResults({ keyword });
 
     const results = useCallback(
         () =>
@@ -22,11 +22,14 @@ const SearchResultList = () => {
 
     return (
         <>
-            {!isSearchResultsLoading && searchResults?.data?.length === 0 && (
+            {!isSearchResultsPending && searchResults?.data?.length === 0 && (
                 <p className="text-sm">No results for {"'" + keyword + "'"}</p>
             )}
 
-            {isSearchResultsLoading
+            {results()}
+
+            {/* There some cases the prefetch query seems not to work so I added a suspense like fallback */}
+            {isSearchResultsPending
                 ? Array.from({ length: 10 }).map((_, idx) => <SearchResultItemSkeleton key={idx} />)
                 : results()}
         </>

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client';
 
 import Input, { InputProps } from '../../ui/input';
@@ -46,10 +48,14 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
 
         setIsLoading(true);
 
-        await queryClient.prefetchQuery({
-            queryKey: GET_SEARCH_RESULTS_KEY(keyword),
-            queryFn: async () => await fetchSearchResults(keyword),
-        });
+        try {
+            await queryClient.prefetchQuery({
+                queryKey: GET_SEARCH_RESULTS_KEY(keyword),
+                queryFn: async () => await fetchSearchResults(keyword),
+            });
+        } catch (error) {
+            //
+        }
 
         setIsLoading(false);
 
