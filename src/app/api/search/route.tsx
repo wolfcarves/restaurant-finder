@@ -32,6 +32,7 @@ export async function GET(request: Request) {
 
                         Only respond with the raw JSON object, no explanation, no comments.
                         Use all of the mentioned locations from the query, unless the user's current location is provided.
+                        If you do not specify ll, the server will attempt to retrieve the IP address from the request, and geolocate that IP address.
                         `,
                 },
             ],
@@ -40,6 +41,8 @@ export async function GET(request: Request) {
         const rawJson = completion.choices?.[0].message.content as string;
         const requestJson = JSON.parse(rawJson);
         const queryParams = new URLSearchParams(requestJson);
+
+        console.log('queryParams', queryParams);
 
         const url = `${baseUrl}/v3/places/search?${queryParams.toString()}`;
         const response = await fetch(url, getOptions);
