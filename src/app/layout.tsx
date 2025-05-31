@@ -1,6 +1,7 @@
+import './globals.css';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
 import ReactQueryProvider from '@/providers/react-query';
 import SuggestionProvider from '@/context/suggestion-provider';
 import SearchProvider from '@/context/search-provider';
@@ -29,11 +30,13 @@ export default function RootLayout({
         <ReactQueryProvider>
             <SuggestionProvider>
                 <SearchProvider>
-                    <html lang="en">
-                        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                            <main className="h-screen">{children}</main>
-                        </body>
-                    </html>
+                    <Suspense>
+                        <html lang="en">
+                            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                                <main className="h-screen">{children}</main>
+                            </body>
+                        </html>
+                    </Suspense>
                 </SearchProvider>
             </SuggestionProvider>
         </ReactQueryProvider>
