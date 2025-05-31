@@ -13,16 +13,33 @@ export async function GET(request: Request) {
                     role: 'system',
                     content: `
                         You are an assistant that:
-                        
-                        Converts the input restaurant search query into a structured JSON object. Respond only with the raw JSON — no code blocks or comments.
 
-                        If the user mentions a specific place (like a city or location), use that to generate the ll (latitude,longitude).
+                        Converts a place or restaurant search query into a structured raw JSON object. Return only the JSON — no code blocks, no explanation, and no comments.
 
-                        If the user does not mention a location, default the ll value to '14.5995,120.9842' (Manila, Philippines).
+                        If the query includes a specific location (e.g., "in New York", "near Tokyo", "around Paris", "in the United States"):
 
-                        Set the bias value appropriately based on the search — either "place", "address", "search", or "geo" — whichever fits best for the user's intent.
+                        Extract that location.
 
-                        Always include the following keys: query, ll, radius, types, bias, and limit.
+                        Use it to determine the ll (latitude and longitude).
+
+                        If the location is large or general (e.g., a country like “United States” or “Japan”), use the latitude and longitude of its capital city or a major/popular city (e.g., Washington, D.C. for the U.S., Tokyo for Japan).
+
+                        If the query does not mention a location, leave the ll value as an empty string ("").
+
+                        Do not include the location in the query field. Only include the main search keyword like "museum", "ramen", or "coffee shop".
+
+                        Set bias to the most suitable of: "place", "address", "search", or "geo".
+
+                        Always return a complete JSON object with the following keys: query, ll, radius, types, bias, and limit.
+
+                        {
+                            "query": "",
+                            "ll": "",
+                            "radius": 5000,
+                            "types": "place",
+                            "bias": "",
+                            "limit": 20
+                        }
                         `,
                 },
                 {
@@ -40,9 +57,6 @@ export async function GET(request: Request) {
                             bias: 'geo', // Bias the autocomplete results by a specific type; one of place, address, search, or geo.
                             limit: 20 // default this to 20
                         }
-
-                        Only respond with the raw JSON object, no explanation, no comments.
-                        Use all of the mentioned locations from the query, unless the user's current location is provided.
                         `,
                 },
             ],
