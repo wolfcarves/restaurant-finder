@@ -1,14 +1,12 @@
-import { Place } from '@/types/place';
+import { SuggestionPlace } from '@/types/sugestions';
 import { useQuery } from '@tanstack/react-query';
 
-type SearchSuggestionsResponse = { data: Place[] };
+type SearchSuggestionsResponse = { data: SuggestionPlace[] };
 
 export function useApiGetSearchSuggestions({ keyword }: { keyword: string }) {
     return useQuery<SearchSuggestionsResponse>({
         queryKey: ['search-suggestions-key', keyword],
         queryFn: async () => {
-            if (!keyword) throw new Error('No keyword');
-
             const response = await fetch(`http://localhost:3000/api/search/suggestions?keyword=${keyword}`);
             if (!response.ok) throw new Error('Failed to fetch');
 
@@ -19,5 +17,6 @@ export function useApiGetSearchSuggestions({ keyword }: { keyword: string }) {
             } as SearchSuggestionsResponse;
         },
         initialData: { data: [] },
+        enabled: true,
     });
 }

@@ -1,4 +1,4 @@
-export type Place = {
+export type SuggestionPlace = {
     type: 'place';
     text: {
         primary: string;

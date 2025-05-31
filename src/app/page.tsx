@@ -1,8 +1,8 @@
 import { RxSketchLogo } from 'react-icons/rx';
-import SearchForm from '@/components/forms/search-form';
-import SuggestionList from '@/components/suggestion/suggestion-list';
+import SearchForm from '@/components/forms/search-form/search-form';
+import SuggestionList from '@/components/list/suggestion/suggestion-list';
 
-export default async function Home() {
+export default async function HomePage() {
     return (
         <div className="relative w-full max-w-[40rem] mx-auto h-screen px-4">
             <div className="absolute top-[35%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
@@ -12,10 +12,7 @@ export default async function Home() {
             </div>
 
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full">
-                <SearchForm />
-                <p className="text-sm text-center text-zinc-500 py-4">
-                    Just describe it — we’ll help you find the perfect place.
-                </p>
+                <SearchForm withDescription />
             </div>
 
             <div className="absolute top-[calc(50%+6rem)] left-1/2 transform -translate-x-1/2 w-full px-4">

@@ -1,9 +1,11 @@
+import { getFourSquareInstance } from '@/lib/forsquareapi';
 import { openai } from '@/lib/openapi';
 
 export async function GET(request: Request) {
     try {
-        const { searchParams } = new URL(request.url);
+        const fsq = getFourSquareInstance();
 
+        const { searchParams } = new URL(request.url);
         const keyword = searchParams.get('keyword');
 
         const completion = await openai.chat.completions.create({
@@ -12,36 +14,38 @@ export async function GET(request: Request) {
                 {
                     role: 'system',
                     content:
-                        'You are an assistant that will convert the input restaurant search query into structured JSON format',
+                        'You are an assistant that will convert the input restaurant search query into structured JSON format, just raw JSON object. Do not wrap it in code blocks or even not include comments.',
                 },
                 {
                     role: 'user',
                     content: `
                         Search query: ${keyword}
 
-                        Convert the search query to this structured JSON format:
+                        Convert the search query to this structured parsable JSON format:
 
                         {
-                            query: "", // string (required) - Must be at least 3 characters
-                            ll: undefined as string | undefined, // e.g. "41.8781,-87.6298"
-                            radius: 5000, // number (optional) - in meters, default is 5000
-                            types: undefined as string | undefined, // e.g. "place,address"
-                            bias: undefined as "place" | "address" | "search" | "geo" | undefined,
-                            session_token: undefined as string | undefined, // optional
-                            limit: 10,
-                        };
+                            query: '', //A search term to be applied against titles. Must be at least 3 characters long.
+                            ll: '', // The latitude/longitude around which you wish to retrieve place information. Specified as latitude,longitude (e.g., ll=41.8781,-87.6298). If you do not specify ll, the server will attempt to retrieve the IP address from the request, and geolocate that IP address.
+                            radius: 5000, //Defines the distance (in meters) within which to return place results. Setting a radius biases the results to the indicated area, but may not fully restrict results to that specified area. If not provided, default radius is set to 5000 meters.
+                            types: 'place', // The types of results to return; any combination of place, address, search, and/or geo.If no types are specified, all types will be returned.
+                            bias: 'geo', // Bias the autocomplete results by a specific type; one of place, address, search, or geo.
+                            limit: 10 // default this to 10
+                        }
 
+                        Only respond with the raw JSON object, no explanation, no comments.
+                        Use all of the mentioned locations, unless the user's current location is provided.
                         `,
                 },
             ],
         });
 
-        return Response.json({
-            completion,
-        });
+        const rawJson = completion.choices?.[0].message.content as string;
+        const requestJson = JSON.parse(rawJson);
+
+        const { data } = await fsq.placeSearch(requestJson);
+
+        return Response.json({ data: data.results });
     } catch (err) {
-        return Response.json({
-            err,
-        });
+        return Response.json({ err });
     }
 }
