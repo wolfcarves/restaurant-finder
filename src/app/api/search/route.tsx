@@ -6,6 +6,9 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const keyword = searchParams.get('keyword');
 
+        const headers = new Headers(request.headers);
+        console.log('headers', headers);
+
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini:free',
             messages: [
