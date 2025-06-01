@@ -1,4 +1,4 @@
-import { baseUrl, getOptions } from '@/lib/forsquareapi';
+import { baseUrl } from '@/lib/forsquareapi';
 
 export async function GET(request: Request) {
     try {
@@ -8,7 +8,15 @@ export async function GET(request: Request) {
         if (!keyword) Response.json({ result: [] });
 
         const url = `${baseUrl}/v3/autocomplete?query=${encodeURIComponent(keyword!)}`;
-        const response = await fetch(url, getOptions);
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: process.env.FORSQUARE_API_KEY as string,
+            },
+        } as RequestInit;
+
+        const response = await fetch(url, options);
         const json = await response.json();
 
         return Response.json({

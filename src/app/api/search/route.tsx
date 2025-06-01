@@ -1,4 +1,4 @@
-import { baseUrl, getOptions } from '@/lib/forsquareapi';
+import { baseUrl } from '@/lib/forsquareapi';
 import { openai } from '@/lib/openapi';
 
 export async function GET(request: Request) {
@@ -8,16 +8,10 @@ export async function GET(request: Request) {
 
         const headers = new Headers(request.headers);
 
+        // Will be undefined on local
+        const ipAddress = headers.get('x-forwarded-for') || undefined;
         const country = headers.get('x-vercel-ip-country');
         const city = headers.get('x-vercel-ip-city');
-
-        console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-
-        // The user location changes on production, The server of forsquare understand the IP address of cloud platform (Vercel) instead the user/client who request it.
-        const userLocationPrompt =
-            process.env.NODE_ENV !== 'production'
-                ? ''
-                : `If the query does not include a specific location. Use this instead ${city} ${country}`;
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini:free',
@@ -27,11 +21,19 @@ export async function GET(request: Request) {
                     content: `
                         You are an assistant that:
 
+                        User location info (Only use if BOTH of the following conditions are true):
+                        1. The search query does NOT include a location.
+                        2. The ipAddress is undefined or missing.
+
+                        {
+                            ipAddress: ${ipAddress ?? 'undefined'},
+                            country: ${country ?? 'undefined'},
+                            city: ${city ?? 'undefined'}
+                        }
+
                         Converts a place or restaurant search query into a structured raw JSON object. Return only the JSON — no code blocks, no explanation, and no comments.
 
                         If the query includes a specific location (e.g., "in New York", "near Tokyo", "around Paris", "in the United States"): Extract that location. Use it to determine the ll (latitude and longitude).
-
-                        ${userLocationPrompt}
 
                         If the location is large or general (e.g., a country like “United States” or “Japan”), use the latitude and longitude of its capital city or a major/popular city (e.g., Washington, D.C. for the U.S., Tokyo for Japan).
 
@@ -44,15 +46,6 @@ export async function GET(request: Request) {
                         If there are any spelling errors or typos in the location or keyword, correct them before generating the JSON.
 
                         Always return a complete JSON object with the following keys: query, ll, radius, types, bias, and limit.
-
-                        {
-                            "query": "",
-                            "ll": "",
-                            "radius": 5000,
-                            "types": "place",
-                            "bias": "",
-                            "limit": 20
-                        }
                         `,
                 },
                 {
@@ -77,12 +70,22 @@ export async function GET(request: Request) {
 
         const rawJson = completion.choices?.[0].message.content as string;
         const requestJson = JSON.parse(rawJson);
-        console.log('requestJson', requestJson);
 
         const queryParams = new URLSearchParams(requestJson);
 
+        console.log('queryParams', queryParams);
+
         const url = `${baseUrl}/v3/places/search?${queryParams.toString()}`;
-        const response = await fetch(url, getOptions);
+        const options = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                Authorization: process.env.FORSQUARE_API_KEY as string,
+                'X-Forwarded-For': ipAddress,
+            },
+        } as RequestInit;
+
+        const response = await fetch(url, options);
         const data = await response.json();
 
         return Response.json({ data: data.results });
