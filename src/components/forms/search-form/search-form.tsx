@@ -63,8 +63,11 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
 
     // To always start clean
     useEffect(() => {
-        if (inputRef.current && pathname === '/') inputRef.current.value = '';
-    }, [pathname]);
+        if (inputRef.current && pathname === '/') {
+            setKeyword('');
+            inputRef.current.value = '';
+        }
+    }, [pathname, setKeyword]);
 
     return (
         <>

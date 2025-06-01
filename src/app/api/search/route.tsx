@@ -60,7 +60,14 @@ export async function GET(request: Request) {
                                 radius: 5000, //Defines the distance (in meters) within which to return place results. Setting a radius biases the results to the indicated area, but may not fully restrict results to that specified area. If not provided, default radius is set to 5000 meters.
                                 types: 'place', // The types of results to return; any combination of place, address, search, and/or geo.If no types are specified, all types will be returned.
                                 bias: 'geo', // Bias the autocomplete results by a specific type; one of place, address, search, or geo.
-                                limit: 20 // default this to 20
+                                min_price: '', Restricts results to only those places within the specified price range. Valid values range between 1 (most affordable) to 4 (most expensive), inclusive.
+                                max_price: // Restricts results to only those places within the specified price range. Valid values range between 1 (most affordable) to 4 (most expensive), inclusive.
+                                open_at: '', // Support local day and local time requests through this parameter. To be specified as DOWTHHMM (e.g., 1T2130), where DOW is the day number 1-7 (Monday = 1, Sunday = 7) and time is in 24 hour format. Places that do not have opening hours will not be returned if this parameter is specified. Cannot be specified in conjunction with open_now.
+                                open_now: undefined, // Do not include this to json if not specified from the query
+                                ne: '', //The latitude/longitude representing the north/east points of a rectangle. Must be used with sw parameter to specify a rectangular search box. Global search results will be omitted.
+                                sw: '', // The latitude/longitude representing the south/west points of a rectangle. Must be used with ne parameter to specify a rectangular search box. Global search results will be omitted.
+                                near: '', //A string naming a locality in the world (e.g., "Chicago, IL"). If the value is not geocodable, returns an error.
+                                limit: 20 // default this to 20,
                             }
                         `,
                 },
@@ -73,6 +80,8 @@ export async function GET(request: Request) {
 
         const rawJson = completion.choices?.[0].message.content as string;
         const requestJson = JSON.parse(rawJson);
+
+        console.log('rawJson', rawJson);
 
         const queryParams = new URLSearchParams(requestJson);
 

@@ -1,3 +1,4 @@
+import { getStatusLabel } from '@/utils/getLabelStatus';
 import Image from 'next/image';
 import React from 'react';
 
@@ -15,10 +16,11 @@ interface SearchResultItemProps {
             suffix: string;
         };
     }[];
+    closed_bucket?: string;
     distance: number;
 }
 
-const SearchResultItem = ({ name, categories, location, distance }: SearchResultItemProps) => {
+const SearchResultItem = ({ name, categories, location, closed_bucket, distance }: SearchResultItemProps) => {
     const category = categories?.[0]?.name || 'Unknown Category';
     const distanceKm = distance > 1000 ? `${(distance / 1000).toFixed(1)} km away` : `${distance} m away`;
 
@@ -46,6 +48,7 @@ const SearchResultItem = ({ name, categories, location, distance }: SearchResult
             <h4 className="font-medium">{name}</h4>
 
             <p className="text-sm text-zinc-500 py-2">{location.formatted_address || 'Address not provided'}</p>
+            <p className="text-sm text-zinc-500 py-2">Availability: {getStatusLabel(closed_bucket) || ''}</p>
         </div>
     );
 };
