@@ -45,6 +45,11 @@ const InstructionModal = () => {
                     request (e.g., rating, price, or open hours), results may be limited or unavailable.
                 </p>
 
+                <p className="text-sm text-gray-600 mt-5">
+                    Another note: The request may take around 3–5 seconds, as I&apos;m using a free or low-cost model
+                    from OpenRouter.
+                </p>
+
                 <div className="flex gap-x-2 items-center mt-4">
                     <input id="modal-check" type="checkbox" onChange={(e) => setIsChecked(e.target.checked)} />
                     <label htmlFor="modal-check" className="text-sm">
