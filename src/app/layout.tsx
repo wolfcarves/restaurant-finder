@@ -27,15 +27,15 @@ export default function RootLayout({
 }>) {
     return (
         <ReactQueryProvider>
-            <SearchProvider>
-                <Suspense>
+            <Suspense>
+                <SearchProvider>
                     <html lang="en">
                         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                             <main className="h-screen">{children}</main>
                         </body>
                     </html>
-                </Suspense>
-            </SearchProvider>
+                </SearchProvider>
+            </Suspense>
         </ReactQueryProvider>
     );
 }
