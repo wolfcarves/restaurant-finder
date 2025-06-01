@@ -31,7 +31,7 @@ const SuggestionList = () => {
     useEffect(() => {
         const keyword = searchCtx?.keyword;
         setKeyword(keyword ?? '');
-    }, [refetchSuggestion, searchCtx?.keyword]);
+    }, [searchCtx?.keyword]);
 
     useEffect(() => {
         if (searchCtx?.isLoading) setHasSearched(true);

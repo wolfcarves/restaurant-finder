@@ -11,14 +11,14 @@ const SearchHeader = () => {
     return (
         <div>
             {/* To reserve space */}
-            <div className="h-24 xl:h-32" aria-label="Reserve position" />
+            <div className="h-24 2xl:h-32" aria-label="Reserve position" />
 
             <div
                 className={`${
-                    isOpen ? 'h-screen fixed' : 'absolute h-24 xl:h-32'
-                }  top-0 start-0 xl:-start-20 w-full  bg-white border-b border-b-zinc-200/80 px-4 duration-500`}
+                    isOpen ? 'h-screen fixed' : 'absolute h-24 2xl:h-32'
+                }  top-0 start-0 2xl:-start-20 w-full  bg-white border-b border-b-zinc-200/80 px-4`}
             >
-                <div className="flex flex-row gap-x-2 xl:gap-x-10 items-start w-full max-w-7xl mx-auto py-4">
+                <div className="flex flex-row gap-x-2 2xl:gap-x-10 items-start w-full max-w-7xl mx-auto py-4">
                     <div className="mt-[13px]">
                         <Logo />
                     </div>

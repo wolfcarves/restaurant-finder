@@ -2,9 +2,13 @@
 
 import { ReactNode, useState } from 'react';
 import { SearchContext } from './search-context';
+import { useSearchParams } from 'next/navigation';
 
 const SearchProvider = ({ children }: { children: ReactNode }) => {
-    const [keyword, setKeyword] = useState<string>('');
+    const searchParams = useSearchParams();
+    const keywordFromParams = searchParams.get('keyword');
+
+    const [keyword, setKeyword] = useState<string>(keywordFromParams ?? '');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     return (

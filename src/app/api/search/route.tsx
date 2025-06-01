@@ -18,9 +18,7 @@ export async function GET(request: Request) {
 
                         If the query includes a specific location (e.g., "in New York", "near Tokyo", "around Paris", "in the United States"):
 
-                        Extract that location.
-
-                        Use it to determine the ll (latitude and longitude).
+                        Extract that location. Use it to determine the ll (latitude and longitude).
 
                         If the location is large or general (e.g., a country like “United States” or “Japan”), use the latitude and longitude of its capital city or a major/popular city (e.g., Washington, D.C. for the U.S., Tokyo for Japan).
 
@@ -66,6 +64,8 @@ export async function GET(request: Request) {
 
         const rawJson = completion.choices?.[0].message.content as string;
         const requestJson = JSON.parse(rawJson);
+        console.log('requestJson', requestJson);
+
         const queryParams = new URLSearchParams(requestJson);
 
         const url = `${baseUrl}/v3/places/search?${queryParams.toString()}`;

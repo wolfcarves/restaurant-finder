@@ -1,7 +1,7 @@
 'use client';
 
 import Input, { InputProps } from '../../ui/input';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ChangeEvent, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { fetchSearchResults, GET_SEARCH_RESULTS_KEY } from '@/hooks/api/useApiGetSearchResults';
@@ -14,6 +14,7 @@ interface SearchFormProps extends InputProps {
 
 const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchFormProps) => {
     const queryClient = useQueryClient();
+    const pathname = usePathname();
     const router = useRouter();
 
     const [hasSearched, setHasSearched] = useState<boolean>(false);
@@ -33,7 +34,7 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
     };
 
     const handleSubmitForm = async () => {
-        if (!keyword) return;
+        if (!keyword || !inputRef.current) return;
         onSubmitForm?.();
 
         setIsLoading(true);
@@ -59,6 +60,11 @@ const SearchForm = ({ withDescription = false, onSubmitForm, ...props }: SearchF
     useEffect(() => {
         if (isLoading) setHasSearched(true);
     }, [isLoading]);
+
+    // To always start clean
+    useEffect(() => {
+        if (inputRef.current && pathname === '/') inputRef.current.value = '';
+    }, [pathname]);
 
     return (
         <>
