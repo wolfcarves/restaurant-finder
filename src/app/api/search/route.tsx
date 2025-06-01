@@ -1,17 +1,14 @@
 import { baseUrl } from '@/lib/forsquareapi';
 import { openai } from '@/lib/openapi';
+import { geolocation } from '@vercel/functions';
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const keyword = searchParams.get('keyword');
 
-        const headers = new Headers(request.headers);
-
-        // Some will be undefined on local
-        const ipAddress = headers.get('x-forwarded-for') || undefined;
-        const country = headers.get('x-vercel-ip-country');
-        const city = headers.get('x-vercel-ip-city');
+        const userDetails = geolocation(request);
+        console.log('userDetails', userDetails);
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini:free',
@@ -24,13 +21,16 @@ export async function GET(request: Request) {
 
                             User location info (Only use if BOTH of the following conditions are true):
                             1. The search query does NOT include a location.
-                            2. The ipAddress is undefined or missing.
+                            2. Use the user's available latitude and longitude if provided.  
+                            If not available, use the city and country to extract the 'll'.  
+                            If neither are available, leave 'll' as an empty string.
 
                             User Info:
                             {
-                                ipAddress: ${ipAddress ?? 'undefined'},
-                                country: ${country ?? 'undefined'},
-                                city: ${city ?? 'undefined'}
+                                latitude: ${userDetails.latitude ?? 'undefined'},
+                                longitude: ${userDetails.longitude ?? 'undefined'},
+                                city: ${userDetails.city ?? 'undefined'},
+                                country: ${userDetails.country ?? 'undefined'}
                             }
 
                             Rules:
@@ -41,10 +41,10 @@ export async function GET(request: Request) {
                             - If the location is large or general (e.g., a country like “United States” or “Japan”):
                             - Use the latitude and longitude of its capital city or a major/popular city (e.g., Washington, D.C. for the U.S., Tokyo for Japan).
 
-                            - If the query does not mention a location AND ipAddress is defined:
+                            - If the query does not mention a location AND ip is defined:
                             - Leave "ll" as an empty string ("") so the Foursquare API will use IP geolocation.
 
-                            - Only if both query has no location AND ipAddress is missing or undefined:
+                            - Only if both query has no location AND ip is missing or undefined:
                             - Use the country and city to determine the "ll".
 
                             Other rules:
@@ -84,7 +84,6 @@ export async function GET(request: Request) {
             headers: {
                 accept: 'application/json',
                 Authorization: process.env.FORSQUARE_API_KEY as string,
-                'X-Forwarded-For': ipAddress,
             },
         } as RequestInit;
 
