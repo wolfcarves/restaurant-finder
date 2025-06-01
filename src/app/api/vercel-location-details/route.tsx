@@ -1,3 +1,5 @@
+// For testing
+
 export async function GET(req: Request) {
     const headers = new Headers(req.headers);
 

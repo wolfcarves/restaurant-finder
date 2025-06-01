@@ -7,7 +7,17 @@ export async function GET(request: Request) {
         const keyword = searchParams.get('keyword');
 
         const headers = new Headers(request.headers);
-        console.log('headers', headers);
+
+        const country = headers.get('x-vercel-ip-country');
+        const city = headers.get('x-vercel-ip-city');
+
+        console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+
+        // The user location changes on production, The server of forsquare understand the IP address of cloud platform (Vercel) instead the user/client who request it.
+        const userLocationPrompt =
+            process.env.NODE_ENV !== 'production'
+                ? ''
+                : `If the query does not include a specific location. Use this instead ${city} ${country}`;
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4o-mini:free',
@@ -19,9 +29,9 @@ export async function GET(request: Request) {
 
                         Converts a place or restaurant search query into a structured raw JSON object. Return only the JSON — no code blocks, no explanation, and no comments.
 
-                        If the query includes a specific location (e.g., "in New York", "near Tokyo", "around Paris", "in the United States"):
+                        If the query includes a specific location (e.g., "in New York", "near Tokyo", "around Paris", "in the United States"): Extract that location. Use it to determine the ll (latitude and longitude).
 
-                        Extract that location. Use it to determine the ll (latitude and longitude).
+                        ${userLocationPrompt}
 
                         If the location is large or general (e.g., a country like “United States” or “Japan”), use the latitude and longitude of its capital city or a major/popular city (e.g., Washington, D.C. for the U.S., Tokyo for Japan).
 
